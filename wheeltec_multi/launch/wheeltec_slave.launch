@@ -1,0 +1,29 @@
+
+<launch>
+	<!-- 从机机器人序号，robot2代表从机1号，一般认为主机为robot1。该参数非常重要，与robot_tf.launch两者必须保持一致-->
+	<arg name="slave_robot" value="robot2"/> 
+
+	<group ns ="$(arg slave_robot)">
+		<!-- 用于连通TF，left_link等...  -->
+	    <param name = "tf_prefix" value="$(arg slave_robot)"/>
+	    
+		<!-- 开启机器人底层相关节点  -->
+		<include file="$(find wheeltec_multi)/launch/turn_on_wheeltec_robot.launch" >
+		  <arg name="slave_robot" value="$(arg slave_robot)"/>
+		</include>
+
+		<!-- 开启避障 -->
+		<node name='laser_tracker' pkg="simple_follower" type="laserTracker.py"> <!-- 提取距离信息 -->
+		  <param name="winSize" value="2" type="int" />
+		  <param name="deltaDist" value="0.2" type="double" />
+		</node>
+		<node pkg="wheeltec_multi" type="multi_avoidance" name="multi_avoidance" output="screen" /> <!-- 发布速度信息 -->
+
+	    <!-- 开启用于导航的自适应蒙特卡洛定位amcl-->
+	    <include file="$(find wheeltec_multi)/launch/include/amcl.launch" >
+	      <arg name="use_map_topic" value="true"/>
+	      <arg name="slave_robot" value="$(arg slave_robot)"/>
+	    </include>
+	</group>
+
+</launch>

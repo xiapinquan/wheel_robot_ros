@@ -1,0 +1,46 @@
+<launch>
+
+  <include file='$(find simple_follower)/launch/nodes/laserTracker.launch' />
+  
+  <include file="$(find turn_on_wheeltec_robot)/launch/turn_on_wheeltec_robot.launch" />
+
+  <include file="$(find turn_on_wheeltec_robot)/launch/wheeltec_lidar.launch" />
+
+  <node name='drive_decision_node' pkg="wheeltec_yolo_action" type="drive_decision_node.py" output="screen">
+    <param name="out_l_center_target" value="0.28" type="double" />
+    <param name="out_l_vel_z_P" value="0.015" type="double" />
+    <param name="out_l_vel_z_D" value="0.001" type="double" />
+    <param name="out_r_center_target" value="0.71" type="double" />
+    <param name="out_r_vel_z_P" value="0.015" type="double" />
+    <param name="out_r_vel_z_D" value="0.001" type="double" />
+    <param name="in_l_center_target" value="0.22" type="double" />
+    <param name="in_l_vel_y_P" value="0.0005" type="double" />
+    <param name="in_l_vel_y_D" value="0.003" type="double" />
+    <param name="in_l_vel_z_P" value="0.006" type="double" />
+    <param name="in_l_vel_z_D" value="0.001" type="double" />
+    <param name="in_r_center_target" value="0.80" type="double" />
+    <param name="in_r_vel_y_P" value="0.0005" type="double" />
+    <param name="in_r_vel_y_D" value="0.003" type="double" />
+    <param name="in_r_vel_z_P" value="0.006" type="double" />
+    <param name="in_r_vel_z_D" value="0.001" type="double" />
+
+    <param name="left_stop_xmin" value="99" type="int" />
+    <param name="left_stop_ymin" value="300" type="int" />
+    <param name="left_stop_xmax" value="183" type="int" />
+    <param name="left_stop_ymax" value="356" type="int" />
+    <param name="right_stop_xmin" value="478" type="int" />
+    <param name="right_stop_ymin" value="309" type="int" />
+    <param name="right_stop_xmax" value="561" type="int" />
+    <param name="right_stop_ymax" value="363" type="int" />
+
+    <param name="road_con_par_left_min" value="-85" type="int" />
+    <param name="road_con_par_left_max" value="-75" type="int" />
+    <param name="road_con_par_rig_min" value="77" type="int" />
+    <param name="road_con_par_rig_max" value="97" type="int" />
+
+  </node>   
+
+  <node name='drive_execution_node' pkg="wheeltec_yolo_action" type="drive_execution_node.py">
+    </node>
+
+</launch>

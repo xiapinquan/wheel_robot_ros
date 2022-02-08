@@ -1,0 +1,42 @@
+<launch>
+  <arg name="slave_robot"             default=""/>
+  <arg name="car_mode"  default="mini_mec" 
+       doc="opt: mini_akm,senior_akm,top_akm_bs,top_akm_dl,
+                 mini_mec,senior_mec_bs,senior_mec_dl,top_mec_bs,top_mec_dl,senior_mec_EightDrive,top_mec_EightDrive,
+                 mini_omni,senior_omni,top_omni,
+                 mini_tank,mini_diff,mini_4wd,senior_diff,four_wheel_diff_bs,four_wheel_diff_dl, brushless_senior_diff,
+                 mini_tank_moveit,mini_4wd_moveit,mini_mec_moveit"/>
+
+  <!-- 多机编队的从机位姿初始化-->
+   <!--
+   参数说明：
+   multi_mode=0   ：表示编队模式为slave纵向编队，需要与robot_tf.launch中的mulit_mode相对应
+   multi_mode=1   ：表示编队模式为row横向编队，需要与robot_tf.launch中的mulit_mode相对应
+   slave_robot2=1 ：表示此时机器人为robot2，即编队中的1号从车，需要与wheeltec_slave.launch中slave_robot相对应
+   slave_robot3=1 ：表示此时机器人为robot3，即编队中的2号从车，需要与wheeltec_slave.launch中slave_robot相对应
+   注意：robot2和robot3的值不能相同
+   -->
+  <node name="pose_stter" pkg="wheeltec_multi" type="set_pose.py" args="0 0 0" output="screen" >
+    <param name="multi_mode"      type="int" value="1" />
+    <param name="slave_robot2"    type="int" value="1"  />
+    <param name="slave_robot3"    type="int" value="0"  />
+  </node>
+  
+  <!-- turn on lidar开启雷达  -->
+  <include file="$(find wheeltec_multi)/launch/wheeltec_lidar.launch" >
+    <arg name="slave_robot" value="$(arg slave_robot)"/>
+  </include>
+
+  <!-- turn on base_serial 开启底层单片机的控制节点  -->
+  <include file="$(find wheeltec_multi)/launch/include/base_serial.launch" >
+    <arg name="slave_robot" value="$(arg slave_robot)"/>
+  </include>
+
+  <!-- 发布用于建图、导航的TF关系与小车外形可视化 -->
+  <include file="$(find wheeltec_multi)/launch/robot_model_visualization.launch" >
+    <arg name="slave_robot" value="$(arg slave_robot)"/>
+    <arg name="car_mode" value="$(arg car_mode)"/>
+  </include>
+  
+ </launch>
+

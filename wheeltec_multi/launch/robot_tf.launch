@@ -1,0 +1,59 @@
+<launch>
+
+<arg name="multi_mode"  default="row" doc="opt: upright, row, trangle"/>
+<arg name="listener"    default="slave_tf_listener2" doc="opt: slave_tf_listener2,slave_tf_listener3"/>
+
+<!-- 在主机（领航者）的运动轨迹中分离出从机的期望跟随坐标  -->
+<!-- row1在主车的左侧，row2在主车的右侧，单位为米  -->
+
+<group if="$(eval multi_mode == 'upright')"> <!-- 纵向队形 -->  
+    <node pkg="tf" type="static_transform_publisher" name="base_to_slave1" args="-0.6  0.00 0 0 0 0   base_footprint slave1 100" />
+    <node pkg="tf" type="static_transform_publisher" name="base_to_slave2" args="-1.4  0.00 0 0 0 0   base_footprint slave2 100" />
+</group>
+
+<group if="$(eval multi_mode == 'row')"> <!-- 横向队形 --> 
+    <node pkg="tf" type="static_transform_publisher" name="base_to_row1"   args=" 0  0.8  0 0 0 0   base_footprint row1   100" />
+    <node pkg="tf" type="static_transform_publisher" name="base_to_row2"   args=" 0 -0.8  0 0 0 0   base_footprint row2   100" />
+</group>
+
+  <!-- 从机1号的位置监听与速度控制节点  -->
+  <group if="$(eval listener == 'slave_tf_listener2')">
+    <node pkg="wheeltec_multi" type="slave_tf_listener" name="slave1" output="screen" > <!-- 命名空间robot2代表从机1号，一般认为主机为robot1 -->
+      <!-- PID参数调节  -->
+      <param name="Scalex_P" type="double" value="5" />
+      <param name="Scalex_I" type="double" value="0.3" />
+      <param name="Scalez_P" type="double" value="5" />
+      <param name="Scalez_I" type="double" value="0.15" />
+      <param name="max_vel" type="double" value="0.4" />
+      <param name="normal_vel" type="double" value="0.2" />
+      <param name="roworleng" type="double" value="1" /> <!--期望队形的切换，此值为1时表示横向队形，为0表示纵向队形-->
+      <param name="plusandminus" type="double" value="1.3" />
+      <param name="base_to_row" type="string" value="row1" /> <!-- 横向队形，目标点row的TF坐标名 -->
+      <param name="base_to_slave" type="string" value="slave1" /> <!-- 纵向队形，目标点slave的TF坐标名 -->      
+      <param name="base_frame" type="string" value="robot2/base_footprint" /> <!-- 从机的TF坐标名 --> 
+      <remap from="cmd_vel_ori" to="robot2/cmd_vel_ori" />
+    </node>
+  </group> 
+
+  <!-- 从机2号的位置监听与速度控制节点  -->
+  <group if="$(eval listener == 'slave_tf_listener3')"> 
+    <node pkg="wheeltec_multi" type="slave_tf_listener" name="slave2" output="screen" >  <!-- 命名空间robot2代表从机1号，一般认为主机为robot1 -->
+      <!-- PID参数调节  -->
+      <param name="Scalex_P" type="double" value="5" />
+      <param name="Scalex_I" type="double" value="0.3" />
+      <param name="Scalez_P" type="double" value="5" />
+      <param name="Scalez_I" type="double" value="0.15" />
+      <param name="max_vel" type="double" value="0.4" />
+      <param name="normal_vel" type="double" value="0.2" />
+      <param name="roworleng" type="double" value="1" /> <!--期望队形的切换，此值为1时表示横向队形，为0表示纵向队形-->
+      <param name="plusandminus" type="double" value="1.3" />
+      <param name="base_to_row" type="string" value="row2" /> <!-- 目标点row的TF坐标名 -->
+      <param name="base_to_slave" type="string" value="slave2" /> <!-- 目标点slave的TF坐标名 -->     
+      <param name="base_frame" type="string" value="robot3/base_footprint" /> <!-- 从机的TF坐标名 --> 
+      <remap from="cmd_vel_ori" to="robot3/cmd_vel_ori" />
+    </node>
+  </group> 
+
+  <!-- 从机1号与2号的group同时屏蔽，即可同时开启两个从机  -->
+ 
+</launch>
