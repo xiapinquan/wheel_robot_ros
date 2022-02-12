@@ -1,0 +1,4 @@
+<launch>
+  <node name='face_tracker' pkg="put_out_fire" type="face_follow.py">
+  </node>
+</launch>
