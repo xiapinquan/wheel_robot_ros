@@ -39,9 +39,9 @@
   <!-- car_mode and tf  mini_mec-->
   <group if="$(eval car_mode == 'mini_mec')">
       <!-- 用于rplidar_ros节点，后面同理不再赘述-->
-      <node pkg="tf" type="static_transform_publisher" name="base_to_laser" args="0.06 0.00 0.20 3.14 0 0  base_footprint laser 100" />
+      <node pkg="tf" type="static_transform_publisher" name="base_to_laser" args="0.06 0.00 0.40 3.14 0 0  base_footprint laser 100" />
       <!-- 用于摄像头相关节点，如3d建图导航，后面同理不再赘述-->
-      <node pkg="tf" type="static_transform_publisher" name="base_to_camera" args="0.12 0 0.15 0 0 0   base_footprint camera_link 100" />
+      <node pkg="tf" type="static_transform_publisher" name="base_to_camera" args="0.12 0 0.35 0 0 0   base_footprint camera_link 100" />
       <node pkg="tf" type="static_transform_publisher" name="base_to_gyro" args="0 0 0 0 0 0 base_footprint gyro_link 100" />
   </group>
   <!-- car_mode and tf  mini_mec_moveit-->

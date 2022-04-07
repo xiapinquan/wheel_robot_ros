@@ -46,8 +46,31 @@ Function: The speed topic subscription Callback function, according to the subsc
 ***************************************/
 void turn_on_robot::Cmd_Vel_Callback(const geometry_msgs::Twist &twist_aux)
 {
-  short  transition;  //intermediate variable //中间变量
+  // xpq add begin
+  if(twist_aux.linear.x == -1.0 && twist_aux.linear.y == -2.0 && twist_aux.linear.z == -3.0){
+    Send_Data.tx[0]=FRAME_HEADER; //frame head 0x7B //帧头0X7B
+    Send_Data.tx[1] = 66; //set aside //预留位
+    if(twist_aux.angular.x == -1.0 && twist_aux.angular.y == -1.0 && twist_aux.angular.z == 1.0){
+      Send_Data.tx[2] = 101; //set aside //预留位
+    }else if(twist_aux.angular.x == -1.0 && twist_aux.angular.y == -1.0 && twist_aux.angular.z == 2.0){
+      Send_Data.tx[2] = 102; //set aside //预留位
+    }
+    Send_Data.tx[9]=Check_Sum(9,SEND_DATA_CHECK); //For the BCC check bits, see the Check_Sum function //BCC校验位，规则参见Check_Sum函数
+    Send_Data.tx[10]=FRAME_TAIL; //frame tail 0x7D //帧尾0X7D
+    try
+    {
+      ROS_ERROR_STREAM("xpq ,Cmd_Vel_Callback=================");
+      Stm32_Serial.write(Send_Data.tx,sizeof (Send_Data.tx)); //Sends data to the downloader via serial port //通过串口向下位机发送数据 
+    }
+    catch (serial::IOException& e)   
+    {
+      ROS_ERROR_STREAM("Unable to send data through serial port"); //If sending data fails, an error message is printed //如果发送数据失败，打印错误信息
+    }
+    return;
+  }
+  // xpq add end
 
+  short  transition;  //intermediate variable //中间变量
   Send_Data.tx[0]=FRAME_HEADER; //frame head 0x7B //帧头0X7B
   Send_Data.tx[1] = 0; //set aside //预留位
   Send_Data.tx[2] = 0; //set aside //预留位

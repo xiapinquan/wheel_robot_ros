@@ -1,6 +1,6 @@
 
 <launch>
-  <arg name="mapping_mode"  default="gmapping" doc="opt: gmapping,hector,cartographer,karto"/>
+  <arg name="mapping_mode"  default="karto" doc="opt: gmapping,hector,cartographer,karto"/>
   
   <!-- 是否在建图时开启导航 默认不开启 仅在rrt自主建图时同时进行-->
   <arg name="navigation" default="false"/>
