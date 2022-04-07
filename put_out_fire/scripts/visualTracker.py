@@ -68,7 +68,6 @@ class visualTracker:
 		self.timeSynchronizer2.registerCallback(self.checkFireStatus)
 
 		self.cmdVelPublisher = rospy.Publisher('/cmd_vel', Twist, queue_size =3)
-
 		self.positionPublisher = rospy.Publisher('/object_tracker/current_position', PositionMsg, queue_size=3)
 		#self.infoPublisher = rospy.Publisher('/object_size=3)
 
@@ -88,9 +87,10 @@ class visualTracker:
 		newPos = None
 		contours = []
 		for box in fire_data.bounding_boxes:
-			#print("xpq ,boxes=",box.Class,",xmin=",box.xmin,",ymin=",box.ymin,",xmax=",box.xmax,",ymax=",box.ymax)
+		#print("xpq ,boxes=",box.Class,",xmin=",box.xmin,",ymin=",box.ymin,",xmax=",box.xmax,",ymax=",box.ymax)
 			contours.append(self.createContour(box))
 		#print("xpq  type(contours)",np.shape(contours))
+
 
 		try:
 			# go threw all the contours. starting with the bigest one  抛出了所有的轮廓线。从最大的那个开始
@@ -173,7 +173,6 @@ class visualTracker:
 			self.fireStatusCount = 0
 			self.not_fire_and_car_stop = 0
 			self.fire_and_car_stop=0
-
 
 	def createContour(self, box):
 		pixels = 2*(box.xmax + box.ymax - box.xmin - box.ymin + 1)
